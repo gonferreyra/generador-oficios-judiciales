@@ -100,8 +100,35 @@ python3 create_template.py
 
 Copiar toda la carpeta `POC-Emi/` a otra PC → `python3 -m pip install --break-system-packages -r requirements.txt` → funciona igual. Sin Docker, sin cloud, sin costos.
 
+## Ejecutable standalone (.exe para Windows)
+
+Para usuarios no técnicos (martilleros, etc.) que no tienen Python instalado:
+
+### Construir en Windows (recomendado)
+
+```cmd
+# En Windows con Python instalado:
+pip install -r requirements.txt pyinstaller
+python build_exe.py
+```
+
+Genera `dist/GeneradorOficios.exe` (~50-80 MB). El usuario solo hace **doble clic** → se abre el navegador en `http://localhost:8000`.
+
+### Para desarrollador (Linux/macOS - solo test local)
+
+```bash
+python3 build_exe.py
+# Genera dist/GeneradorOficios (binario Linux, para testear que compila bien)
+```
+
+### Notas importantes
+
+- **Compilar en Windows** para obtener `.exe` nativo (cross-compile no funciona bien)
+- Incluye templates, data y web automáticamente via `--add-data`
+- `--noconsole` oculta la terminal (solo abre el navegador)
+- Para evitar alertas de antivirus: firmar con certificado EV (opcional)
+
 ## Para producción futura
 
-- Ejecutable standalone: `pyinstaller --onefile generator.py`
 - Docker: `docker build -t oficios . && docker run -p 8000:8000 oficios`
 - Agregar autenticación, logs, base de datos de plantillas, etc.
