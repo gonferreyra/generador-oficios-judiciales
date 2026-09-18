@@ -1,6 +1,48 @@
-# Generador de Oficios - POC Local
+# Generador de Oficios Judiciales
 
-Sistema minimalista para generar oficios judiciales a partir de plantillas Word (.docx) + datos variables.
+Sistema minimalista para generar oficios judiciales (Constatación, Rentas, Municipalidad) a partir de plantillas Word (.docx) + datos variables.
+
+---
+
+## 🚀 Inicio Rápido (para usuarios finales - Windows)
+
+**Si solo querés usar la app (sin instalar Python):**
+
+1. Descargá el archivo `GeneradorOficios.exe` desde [Releases](../../releases)
+2. Hacé **doble clic** en el `.exe`
+3. Se abre automáticamente el navegador en `http://localhost:8000`
+4. Completá el formulario y descargá los 3 oficios en un ZIP
+
+> **Nota:** Si Windows muestra "Protegiste tu PC", clickeá "Más información" → "Ejecutar de todas formas". El archivo no está firmado digitalmente aún.
+
+---
+
+## 🛠️ Instalación para Desarrolladores (Python)
+
+### Requisitos
+- Python 3.10+
+- Git
+
+### Pasos
+```bash
+# 1. Clonar repo
+git clone git@github.com:gonferreyra/generador-oficios-judiciales.git
+cd generador-oficios-judiciales/moray
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+# 3a. Usar versión web (desarrollo)
+python server.py
+# Abre http://localhost:8000
+
+# 3b. Usar versión CLI
+python generator.py constatacion --data data/ejemplo_constatacion.json
+```
+
+> **Linux/Ubuntu:** Usá `python3` y `pip3`. Si `pip` no está en PATH: `export PATH="$HOME/.local/bin:$PATH"`
+
+---
 
 ## Estructura
 
@@ -100,8 +142,35 @@ python3 create_template.py
 
 Copiar toda la carpeta `POC-Emi/` a otra PC → `python3 -m pip install --break-system-packages -r requirements.txt` → funciona igual. Sin Docker, sin cloud, sin costos.
 
+## Ejecutable standalone (.exe para Windows)
+
+Para usuarios no técnicos (martilleros, etc.) que no tienen Python instalado:
+
+### Construir en Windows (recomendado)
+
+```cmd
+# En Windows con Python instalado:
+pip install -r requirements.txt pyinstaller
+python build_exe.py
+```
+
+Genera `dist/GeneradorOficios.exe` (~50-80 MB). El usuario solo hace **doble clic** → se abre el navegador en `http://localhost:8000`.
+
+### Para desarrollador (Linux/macOS - solo test local)
+
+```bash
+python3 build_exe.py
+# Genera dist/GeneradorOficios (binario Linux, para testear que compila bien)
+```
+
+### Notas importantes
+
+- **Compilar en Windows** para obtener `.exe` nativo (cross-compile no funciona bien)
+- Incluye templates, data y web automáticamente via `--add-data`
+- `--noconsole` oculta la terminal (solo abre el navegador)
+- Para evitar alertas de antivirus: firmar con certificado EV (opcional)
+
 ## Para producción futura
 
-- Ejecutable standalone: `pyinstaller --onefile generator.py`
 - Docker: `docker build -t oficios . && docker run -p 8000:8000 oficios`
 - Agregar autenticación, logs, base de datos de plantillas, etc.
