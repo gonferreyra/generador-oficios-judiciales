@@ -1,0 +1,107 @@
+# Generador de Oficios - POC Local
+
+Sistema minimalista para generar oficios judiciales a partir de plantillas Word (.docx) + datos variables.
+
+## Estructura
+
+```
+poC-oficios/
+├── templates/                 # Plantillas .docx base
+│   ├── constatacion/
+│   │   └── tribunal.docx
+│   ├── rentas/
+│   │   └── tribunal.docx
+│   └── municipalidad/
+│       └── tribunal.docx
+├── data/                      # Datos de ejemplo (JSON)
+├── output/                    # Oficios generados (se crea solo)
+├── web/                       # Interfaz web
+│   └── templates/             # HTML Jinja2
+├── generator.py               # Motor CLI + librería
+├── server.py                  # Servidor web local (FastAPI)
+├── create_template.py         # Script para crear plantillas
+├── requirements.txt
+└── README.md
+```
+
+## Instalación (una sola vez)
+
+```bash
+cd /home/gon/github/POC-Emi
+python3 -m pip install --break-system-packages -r requirements.txt
+```
+
+> **Nota:** En Linux/Ubuntu usar `python3` (no `python`). Si `pip` no está en PATH: `export PATH="/home/gon/.local/bin:$PATH"`
+
+## Uso CLI
+
+```bash
+# 1. Constatación
+python3 generator.py constatacion --data data/ejemplo_constatacion.json
+
+# 2. Rentas
+python3 generator.py rentas --data data/ejemplo_rentas.json
+
+# 3. Municipalidad
+python3 generator.py municipalidad --data data/ejemplo_municipalidad.json
+
+# Interactivo (pide campos por consola)
+python3 generator.py constatacion
+
+# Especificar nombre de salida
+python3 generator.py rentas --data data/ejemplo_rentas.json --output mi_rentas.docx
+```
+
+Los archivos `.docx` generados caen en `output/`
+
+## Uso Web (interfaz visual)
+
+```bash
+python3 server.py
+# Abre http://localhost:8000 en el navegador
+# 1. Seleccionás tipo de oficio
+# 2. Completás formulario
+# 3. Descarga .docx automáticamente
+```
+
+## Tipos de oficio incluidos
+
+| Tipo | Firma | Campos clave |
+|------|-------|--------------|
+| **constatacion** | Solo tribunal | fecha, autos, juzgado, matrícula, titular, qué se subasta, designado, descripción, nomenclatura catastral |
+| **rentas** | Solo tribunal | fecha, autos, juzgado, matrícula, titular, descripción, número de cuenta |
+| **municipalidad** | Solo tribunal | fecha, autos, juzgado, matrícula, titular, descripción, nomenclatura catastral, ciudad |
+
+## Agregar nuevo tipo de oficio
+
+1. Crear carpeta en `templates/nuevo_tipo/`
+2. Poner `tribunal.docx` (y `martillero.docx` si aplica) con `{{placeholders}}`
+3. Agregar entrada en `CAMPOS` dict en `generator.py` (línea ~20):
+
+```python
+"nuevo_tipo": {
+    "required": ["campo1", "campo2", ...],
+    "labels": {"campo1": "Etiqueta amigable", ...}
+}
+```
+
+4. Listo: aparece en CLI y web automáticamente
+
+## Crear plantillas propias
+
+Opción A: Editar el `.docx` directamente en Word (usar `{{campo}}` para variables)
+
+Opción B: Modificar `create_template.py` y correr:
+```bash
+python3 create_template.py
+```
+
+## Compartir el sistema
+
+Copiar toda la carpeta `POC-Emi/` a otra PC → `python3 -m pip install --break-system-packages -r requirements.txt` → funciona igual. Sin Docker, sin cloud, sin costos.
+
+## Para producción futura
+
+- Ejecutable standalone: `pyinstaller --onefile generator.py`
+- Docker: `docker build -t oficios . && docker run -p 8000:8000 oficios`
+- Agregar autenticación, logs, base de datos de plantillas, etc.

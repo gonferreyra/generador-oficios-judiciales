@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Oficios</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; color: #1a1a2e; background: #f8f9fa; }
+        h1 { text-align: center; color: #16213e; margin-bottom: 0.5rem; font-weight: 600; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 2rem; }
+        .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 2rem; margin-bottom: 1rem; transition: box-shadow 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .card h2 { margin: 0 0 0.5rem; font-size: 1.25rem; color: #16213e; font-weight: 600; }
+        .card p { margin: 0 0 1.5rem; color: #666; font-size: 0.95rem; }
+        .btn { display: inline-block; background: linear-gradient(135deg, #16213e 0%, #1a2a4a 100%); color: white; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; width: 100%; font-size: 1.05rem; transition: all 0.2s; }
+        .btn:hover { background: linear-gradient(135deg, #0f1a2e 0%, #14223e 100%); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(22,33,62,0.3); }
+        .btn:active { transform: translateY(0); }
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 1.5rem; font-size: 0.85rem; color: #555; }
+        .feature { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem; background: #f8f9fa; border-radius: 6px; }
+        .footer { text-align: center; margin-top: 2.5rem; color: #999; font-size: 0.8rem; }
+        @media (max-width: 480px) { .features { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <h1>📄 Generador de Oficios</h1>
+    <p class="subtitle">Completá un solo formulario y descargá los 3 oficios listos para usar</p>
+
+    <div class="card">
+        <h2>Formulario Unificado</h2>
+        <p>Generá <strong>Constatación</strong>, <strong>Rentas</strong> y <strong>Municipalidad</strong> de una sola vez.</p>
+        <a href="/formulario" class="btn">Comenzar →</a>
+        
+        <div class="features">
+            <div class="feature">📋 Constatación</div>
+            <div class="feature">💰 Rentas</div>
+            <div class="feature">🏛️ Municipalidad</div>
+        </div>
+    </div>
+
+    <p class="footer">Ejecutándose localmente · Sin datos en la nube</p>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Oficios</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; 
+            max-width: 900px; 
+            margin: 2rem auto; 
+            padding: 0 1rem; 
+            color: #1a1a2e; 
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 1.5rem; 
+        }
+        h1 { 
+            font-size: 1.75rem; 
+            color: #16213e; 
+            margin: 0;
+            font-weight: 600;
+        }
+        .back-link { 
+            color: #666; 
+            text-decoration: none; 
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .back-link:hover { 
+            color: #16213e; 
+            background: #e8ebf0;
+        }
+        .card { 
+            background: #fff; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 12px; 
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .section { 
+            margin-bottom: 2rem; 
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #16213e;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e8ebf0;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .form-group { 
+            margin-bottom: 1.25rem; 
+        }
+        label { 
+            display: block; 
+            font-weight: 500; 
+            margin-bottom: 0.4rem; 
+            color: #333; 
+            font-size: 0.9rem;
+        }
+        .required::after { 
+            content: " *"; 
+            color: #c00; 
+        }
+        input, textarea, select { 
+            width: 100%; 
+            padding: 0.75rem 1rem; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-family: inherit; 
+            transition: all 0.2s;
+            background: #fff;
+        }
+        input:focus, textarea:focus, select:focus { 
+            outline: none; 
+            border-color: #16213e; 
+            box-shadow: 0 0 0 3px rgba(22,33,62,0.1); 
+        }
+        textarea { 
+            min-height: 100px; 
+            resize: vertical; 
+            line-height: 1.5;
+        }
+        .help-text { 
+            font-size: 0.75rem; 
+            color: #888; 
+            margin-top: 0.35rem; 
+        }
+        .btn-group { 
+            display: flex; 
+            gap: 1rem; 
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        .btn { 
+            flex: 1; 
+            padding: 1rem 1.5rem; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border: none; 
+            text-decoration: none; 
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #16213e 0%, #1a2a4a 100%); 
+            color: white; 
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #0f1a2e 0%, #14223e 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(22,33,62,0.3);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-secondary { 
+            background: #f5f5f5; 
+            color: #333; 
+            border: 1px solid #ddd; 
+        }
+        .btn-secondary:hover { 
+            background: #eee; 
+        }
+        @media (max-width: 600px) { 
+            .btn-group { flex-direction: column; }
+            .form-row { grid-template-columns: 1fr; }
+            .card { padding: 1.5rem; }
+        }
+        .field-hint {
+            font-size: 0.75rem;
+            color: #888;
+            font-style: italic;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.25rem;
+            transform: scale(1.2);
+        }
+        .conditional-field {
+            display: none;
+            margin-top: 1rem;
+            padding-left: 1.5rem;
+            border-left: 2px solid #e8ebf0;
+        }
+        .conditional-field.visible {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Generar Oficios</h1>
+        <a href="/" class="back-link">← Volver</a>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="/generar" id="oficiosForm">
+            <input type="hidden" name="firma" value="tribunal">
+
+            <div class="section">
+                <div class="section-title">📅 Fecha</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dia" class="required">Día</label>
+                        <input type="number" id="dia" name="dia" min="1" max="31" required placeholder="15">
+                        <span class="help-text">Ej: 15</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="mes" class="required">Mes</label>
+                        <input type="text" id="mes" name="mes" required placeholder="junio">
+                        <span class="help-text">Ej: junio</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="anio" class="required">Año</label>
+                        <input type="number" id="anio" name="anio" min="2000" max="2100" required placeholder="2026">
+                        <span class="help-text">Ej: 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">⚖️ Datos del Expediente</div>
+                <div class="form-group">
+                    <label for="autos_caratulados" class="required">Autos caratulados</label>
+                    <textarea id="autos_caratulados" name="autos_caratulados" required placeholder="SANCHEZ, JOSE PRIMO C/ VERGAGNI, JUAN CARLOS Y OTRO – ACCIONES POSESORIAS/REALES..."></textarea>
+                    <span class="help-text">Nombre completo del expediente judicial</span>
+                </div>
+                <div class="form-group">
+                    <label for="juzgado" class="required">Juzgado</label>
+                    <input type="text" id="juzgado" name="juzgado" required placeholder="JUZGADO 1A INST CIV COM 32A NOM">
+                    <span class="help-text">Ej: JUZGADO 1A INST CIV COM 32A NOM</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🏠 Datos del Inmueble y Titular</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="matricula" class="required">Matrícula</label>
+                        <input type="text" id="matricula" name="matricula" required placeholder="592.064 (13-04)">
+                        <span class="help-text">Ej: 592.064 (13-04)</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="ciudad" class="required">Ciudad / Intendencia</label>
+                        <input type="text" id="ciudad" name="ciudad" required placeholder="Unquillo">
+                        <span class="help-text">Para oficio a Municipalidad. Ej: Unquillo</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="titular" class="required">Titular</label>
+                    <input type="text" id="titular" name="titular" required placeholder="QUIROGA de VERGAGNI, Mabel Beatriz (100%)">
+                    <span class="help-text">Nombre completo y porcentaje. Ej: QUIROGA de VERGAGNI, Mabel Beatriz (100%)</span>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion_inmueble" class="required">Descripción del inmueble</label>
+                    <textarea id="descripcion_inmueble" name="descripcion_inmueble" required placeholder="UNA FRACCION DE TERRENO: ubic. en Unquillo, Ped. Río Ceballos, Dpto. Colón..."></textarea>
+                    <span class="help-text">Descripción completa según escritura/catastro</span>
+                </div>
+                <div class="form-group">
+                    <label for="nomenclatura_catastral" class="required">Nomenclatura catastral</label>
+                    <input type="text" id="nomenclatura_catastral" name="nomenclatura_catastral" required placeholder="13-04-49-01-02-018-019">
+                    <span class="help-text">Ej: 13-04-49-01-02-018-019</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔨 Datos específicos para Constatación</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="destinatario_constatacion" class="required">Destinatario</label>
+                        <select id="destinatario_constatacion" name="destinatario_constatacion" required>
+                            <option value="Sr. OFICIAL DE JUSTICIA">Sr. OFICIAL DE JUSTICIA</option>
+                            <option value="Sr. JUEZ DE PAZ CON JURISDICCIÓN" selected>Sr. JUEZ DE PAZ CON JURISDICCIÓN</option>
+                        </select>
+                        <span class="help-text">Seleccionar según corresponda</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="que_se_subasta" class="required">Qué se subasta</label>
+                        <input type="text" id="que_se_subasta" name="que_se_subasta" required placeholder="derechos y acciones hereditarios sobre el referido inmueble">
+                        <span class="help-text">Ej: derechos y acciones hereditarios sobre el referido inmueble</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="designado" class="required">Martillero designado</label>
+                    <input type="text" id="designado" name="designado" required placeholder="Carlos R. Ferreyra">
+                    <span class="help-text">Nombre del martillero. Ej: Carlos R. Ferreyra</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">💰 Datos específicos para Rentas</div>
+                <div class="form-group">
+                    <label for="numero_cuenta" class="required">Número de cuenta</label>
+                    <input type="text" id="numero_cuenta" name="numero_cuenta" required placeholder="1304-02708973">
+                    <span class="help-text">Ej: 1304-02708973</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📋 Exención de pago (aplica a los 3 oficios)</div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="exento_pago" name="exento_pago" value="on">
+                    <label for="exento_pago">Exento de pago</label>
+                </div>
+                
+                <div class="conditional-field" id="tipoExencionField">
+                    <div class="form-group">
+                        <label for="tipo_exencion" class="required">Tipo de exención</label>
+                        <select id="tipo_exencion" name="tipo_exencion">
+                            <option value="honorario_abogado">Honorario de abogado (Art. 111 Ley 9459)</option>
+                            <option value="otros">Otra exención</option>
+                        </select>
+                        <span class="help-text">Seleccionar tipo de exención</span>
+                    </div>
+                    
+                    <div class="conditional-field" id="textoExencionField">
+                        <div class="form-group">
+                            <label for="texto_exencion_otros" class="required">Texto de exención personalizada</label>
+                            <textarea id="texto_exencion_otros" name="texto_exencion_otros" placeholder="Escriba el texto legal correspondiente..."></textarea>
+                            <span class="help-text">Texto que se incluirá en los 3 oficios</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">📥 Generar y descargar 3 oficios (.zip)</button>
+                <a href="/formulario" class="btn btn-secondary">Limpiar formulario</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Manejo de campos condicionales para exención
+        const exentoCheckbox = document.getElementById('exento_pago');
+        const tipoExencionField = document.getElementById('tipoExencionField');
+        const tipoExencionSelect = document.getElementById('tipo_exencion');
+        const textoExencionField = document.getElementById('textoExencionField');
+        const textoExencionTextarea = document.getElementById('texto_exencion_otros');
+
+        exentoCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                tipoExencionField.classList.add('visible');
+                // Resetear tipo a honorario_abogado por defecto
+                tipoExencionSelect.value = 'honorario_abogado';
+                textoExencionField.classList.remove('visible');
+                textoExencionTextarea.removeAttribute('required');
+            } else {
+                tipoExencionField.classList.remove('visible');
+                textoExencionField.classList.remove('visible');
+                textoExencionTextarea.removeAttribute('required');
+            }
+        });
+
+        tipoExencionSelect.addEventListener('change', function() {
+            if (this.value === 'otros') {
+                textoExencionField.classList.add('visible');
+                textoExencionTextarea.setAttribute('required', '');
+            } else {
+                textoExencionField.classList.remove('visible');
+                textoExencionTextarea.removeAttribute('required');
+            }
+        });
+    </script>
+</body>
+</html>
