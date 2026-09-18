@@ -57,7 +57,9 @@ async def formulario_unificado(request: Request):
         "descripcion_inmueble",
         "nomenclatura_catastral", "ciudad",
         "que_se_subasta", "designado",
-        "numero_cuenta"
+        "destinatario_constatacion",
+        "numero_cuenta",
+        "exento_pago", "tipo_exencion", "texto_exencion_otros"
     ]
     campos_ordenados = [c for c in orden_prioridad if c in todos_campos]
     
